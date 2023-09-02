@@ -25,13 +25,13 @@ export const ChatBox = styled(Box)(({ theme }) => ({
   padding: "8px",
 }));
 export const ChatArea = styled(Box)(({ theme }) => ({
-  height: "80%",
+  height: "66%",
   width: "100%",
   border: "1px solid black",
   margin: "5px auto",
 }));
 export const ChatInputBox = styled(Box)(({ theme }) => ({
-  height: "17%",
+  height: "31%",
   width: "100%",
   border: "1px solid black",
   borderRadius: "8px",
@@ -63,6 +63,11 @@ export const SendBox = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
+}));
+export const EmojiKeyBoard = styled(Box)(({ theme }) => ({
+  position: "absolute",
+  top: "20%",
+  right: "38%",
 }));
 export const SendButton = styled(Button)(({ theme }) => ({
   backgroundColor: "green",

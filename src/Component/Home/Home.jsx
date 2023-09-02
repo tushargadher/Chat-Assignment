@@ -15,44 +15,57 @@ import {
   SendButton,
   hoverEfffect,
   SendBox,
+  EmojiKeyBoard,
 } from "./style";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
 import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
-import { dataState } from "../../ContextAPI/DataProvider";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+
+const modules = {
+  toolbar: [
+    ["bold", "italic", "strike"],
+    ["link"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    ["blockquote"],
+    ["code"],
+  ],
+};
 const Home = () => {
-  const [msg, setMsg] = useState("");
+  const [value, setValue] = useState("");
   const [showPicker, setShowPicker] = useState(false);
+
+  //add emoji in message
   const onEmojiClick = (emojiData) => {
-    setMsg(msg + emojiData.emoji);
+    setValue(value + emojiData.emoji);
     setShowPicker(false);
   };
-  const onChange = (e) => {
-    setMsg(e.target.value);
+
+  const sendMessage = () => {
+    console.log(`sending message ${value}`);
+    setValue("");
   };
+
   return (
     <>
       <Container>
         <Text>React Chat App</Text>
         <ChatBox>
           <ChatArea></ChatArea>
+          {showPicker && (
+            <EmojiKeyBoard>
+              <EmojiPicker onEmojiClick={onEmojiClick} />
+            </EmojiKeyBoard>
+          )}
           <ChatInputBox>
-            <FormatButtons />
-            <StyledInput
-              hiddenLabel
-              placeholder="Chats comes here..."
-              variant="outlined"
-              size="small"
-              fullWidth
-              sx={{
-                "& fieldset": { border: "none" },
-                "& input::placeholder": {
-                  fontSize: "14px",
-                },
-              }}
-              value={msg}
-              onChange={onChange}
+            <ReactQuill
+              theme="snow"
+              value={value}
+              onChange={setValue}
+              modules={modules}
             />
+
             <SendBox>
               <Box>
                 <AddCircleOutlineIcon
@@ -63,17 +76,11 @@ const Home = () => {
                   sx={{ marginRight: "5px", cursor: "pointer" }}
                   onClick={() => setShowPicker(!showPicker)}
                 />
-                {showPicker && (
-                  <EmojiPicker
-                    onEmojiClick={onEmojiClick}
-                    style={{ display: "n" }}
-                  />
-                )}
                 <AlternateEmailIcon
                   sx={{ marginRight: "5px", cursor: "pointer" }}
                 />
               </Box>
-              <SendButton sx={hoverEfffect}>
+              <SendButton sx={hoverEfffect} onClick={sendMessage}>
                 <SendIcon sx={{ fontSize: "14px" }} />
               </SendButton>
             </SendBox>
