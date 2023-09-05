@@ -12,6 +12,9 @@ export const Container = styled(Box)(({ theme }) => ({
 export const Text = styled(Typography)(({ theme }) => ({
   fontSize: "18px",
 }));
+export const ExitBtn = styled(Button)(({ theme }) => ({
+  fontSize: "12px",
+}));
 
 export const ChatBox = styled(Box)(({ theme }) => ({
   height: "90%",
@@ -23,12 +26,17 @@ export const ChatBox = styled(Box)(({ theme }) => ({
   backgroundColor: "white",
   boxSizing: "border-box",
   padding: "8px",
+  [theme.breakpoints.down("md")]: {
+    width: "90%",
+  },
 }));
 export const ChatArea = styled(Box)(({ theme }) => ({
   height: "66%",
   width: "100%",
   border: "1px solid black",
   margin: "5px auto",
+  overflow: "scroll",
+  overflowX: "hidden",
 }));
 export const ChatInputBox = styled(Box)(({ theme }) => ({
   height: "31%",
@@ -66,7 +74,7 @@ export const SendBox = styled(Box)(({ theme }) => ({
 }));
 export const EmojiKeyBoard = styled(Box)(({ theme }) => ({
   position: "absolute",
-  top: "20%",
+  top: "25%",
   right: "38%",
 }));
 export const SendButton = styled(Button)(({ theme }) => ({

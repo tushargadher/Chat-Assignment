@@ -5,3 +5,31 @@
 .ql-editor p {
   display: inline-block;
 }
+.MuiTypography-root p {
+  display: inline-block;
+}
+.MuiTypography-root p img {
+  height: 100px;
+}
+.alretbox {
+  font-size: 0.9rem;
+  background-color: #cccaca;
+  border-radius: 2px;
+  width: 30%;
+  height: 5%;
+  margin: 2px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.MessageBox {
+  border-radius: 5px;
+  background-color: #77ff73;
+  max-width: 30%;
+  margin: 3px;
+  padding: 3px;
+}
+.ql-editor p img {
+  height: 40px;
+}
