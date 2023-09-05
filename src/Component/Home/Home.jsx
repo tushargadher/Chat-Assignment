@@ -32,7 +32,7 @@ import io from "socket.io-client";
 var socket;
 
 const Home = () => {
-  const { handleExit } = dataState();
+  const { handleExit, server } = dataState();
   const [value, setValue] = useState("");
   const [showPicker, setShowPicker] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -42,7 +42,7 @@ const Home = () => {
   const myRef = useRef(null);
 
   useEffect(() => {
-    socket = io("http://localhost:5000");
+    socket = io(server);
     if (!JSON.parse(localStorage.getItem("user"))) {
       const user = prompt("Enter Name To Join Chat");
       localStorage.setItem("user", JSON.stringify(user));
@@ -81,7 +81,7 @@ const Home = () => {
       };
       console.log(`sending message ${value}`);
       const res = await axios.post(
-        "http://localhost:5000/api/message/send",
+        `${server}/api/message/send`,
         { user, value },
         config
       );
@@ -101,36 +101,34 @@ const Home = () => {
   const getAllMessage = async () => {
     document.querySelector(".ql-image").style.display = "none";
     try {
-      const { data } = await axios.get(
-        "http://localhost:5000/api/message/getAll"
-      );
+      const { data } = await axios.get(`${server}/api/message/getAll`);
       setMessages(data);
     } catch (error) {
       toast.error(error.response.data);
     }
   };
 
-  const handleJoin = async (name) => {
-    console.log(name);
-    // setLaoding(true);
-    try {
-      const config = {
-        header: {
-          "Content-Type": "application/json",
-        },
-      };
-      const { data } = await axios.post(
-        "http://localhost:5000/api/user/join",
-        { name },
-        config
-      );
-      if (data) {
-        localStorage.setItem("user", JSON.stringify(data));
-      }
-    } catch (error) {
-      toast.error(error.response.data);
-    }
-  };
+  // const handleJoin = async (name) => {
+  //   console.log(name);
+  //   // setLaoding(true);
+  //   try {
+  //     const config = {
+  //       header: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     };
+  //     const { data } = await axios.post(
+  //       `${server}/api/user/join`,
+  //       { name },
+  //       config
+  //     );
+  //     if (data) {
+  //       localStorage.setItem("user", JSON.stringify(data));
+  //     }
+  //   } catch (error) {
+  //     toast.error(error.response.data);
+  //   }
+  // };
 
   // const selectFile = (e) => {
   //   setFile(e.target.files[0]);
@@ -158,7 +156,7 @@ const Home = () => {
                   key={msg._id}
                   sx={{
                     borderRadius: "5px",
-                    maxWidth: "30%",
+                    maxWidth: "40%",
                     margin: "3px",
                     padding: "3px",
                     backgroundColor: isSender(msg.user) ? "#85C1E9" : "#77ff73",
