@@ -6,6 +6,7 @@ const DataProvider = ({ children }) => {
   const server = "https://richchatapp.onrender.com";
   const handleExit = () => {
     localStorage.removeItem("user");
+    location.reload();
     // navigate("/");
   };
   return (

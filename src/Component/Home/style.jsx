@@ -12,16 +12,12 @@ export const Container = styled(Box)(({ theme }) => ({
 export const Text = styled(Typography)(({ theme }) => ({
   fontSize: "18px",
 }));
-export const ExitBtn = styled(Button)(({ theme }) => ({
-  fontSize: "12px",
-}));
 
 export const ChatBox = styled(Box)(({ theme }) => ({
   height: "90%",
   width: "55%",
   display: "flex",
   flexDirection: "column",
-  border: "1px solid black",
   borderRadius: "5px",
   backgroundColor: "white",
   boxSizing: "border-box",
@@ -88,3 +84,23 @@ export const hoverEfffect = {
     backgroundColor: "green",
   },
 };
+export const JoinBox = styled(Box)(({ theme }) => ({
+  width: "55%",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  borderRadius: "5px",
+  backgroundColor: "white",
+  boxSizing: "border-box",
+  padding: "5px 10px",
+  marginBottom: "5px",
+  [theme.breakpoints.down("md")]: {
+    width: "90%",
+  },
+}));
+export const ExitBtn = styled(Button)(({ theme }) => ({
+  fontSize: "12px",
+  height: "25px",
+  width: "12%",
+  textTransform: "none",
+}));

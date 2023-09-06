@@ -19,6 +19,7 @@ import {
   SendBox,
   ExitBtn,
   EmojiKeyBoard,
+  JoinBox,
 } from "./style";
 import { modules, isSender } from "../../Utills/Funtions";
 import { Box, Typography, Tooltip } from "@mui/material";
@@ -38,7 +39,7 @@ const Home = () => {
   const [messages, setMessages] = useState([]);
   const [user, setUser] = useState();
 
-  const [file, setFile] = useState();
+  // const [file, setFile] = useState();
   const myRef = useRef(null);
 
   useEffect(() => {
@@ -46,14 +47,16 @@ const Home = () => {
     if (!JSON.parse(localStorage.getItem("user"))) {
       const user = prompt("Enter Name To Join Chat");
       localStorage.setItem("user", JSON.stringify(user));
+      socket.emit("new-user-joined", user);
     }
     setUser(JSON.parse(localStorage.getItem("user")));
-    // socket.emit("new-user-joined", user);
-    // socket.on("user-joined", (user) => {
-    //   let ChatArea = myRef.current;
-    //   ChatArea.appendChild(AlertBox(user));
-    //   console.log(`${user} is Joined`);
-    // });
+
+    socket.on("user-joined", (user) => {
+      const synth = window.speechSynthesis;
+      const utterance = new SpeechSynthesisUtterance(`${user} Joind Chat`);
+      synth.speak(utterance);
+      toast.info(`${user} Joined Chat`);
+    });
     // socket.on("receive", (obj) => {
     //   let ChatArea = myRef.current;
     //   ChatArea.appendChild(
@@ -64,6 +67,8 @@ const Home = () => {
   }, []);
   useEffect(() => {
     getAllMessage();
+    //scroll to new messsage
+    myRef.current.scroll(0, myRef.current.scrollHeight);
   }, [messages]);
 
   const onEmojiClick = (emojiData) => {
@@ -86,7 +91,7 @@ const Home = () => {
         config
       );
       socket.emit("send", value);
-      setFile();
+      // setFile();
       setMessages([...messages, value]);
       if (res) {
         console.log(res);
@@ -99,7 +104,7 @@ const Home = () => {
   };
 
   const getAllMessage = async () => {
-    document.querySelector(".ql-image").style.display = "none";
+    // document.querySelector(".ql-image").style.display = "none";
     try {
       const { data } = await axios.get(`${server}/api/message/getAll`);
       setMessages(data);
@@ -138,85 +143,99 @@ const Home = () => {
     <>
       <ToastContainer />
       <Container>
-        <ExitBtn variant="contained" onClick={handleExit}>
-          Exit
-        </ExitBtn>
-        <Text>React Chat App</Text>
+        <JoinBox>
+          <Text>React Chat App</Text>
+          <ExitBtn variant="contained" onClick={handleExit}>
+            {user ? "Leave" : "Join"}
+          </ExitBtn>
+        </JoinBox>
         <ChatBox>
-          <ChatArea ref={myRef}>
-            {messages.length == 0 && (
-              <Box sx={{ display: "flex", justifyContent: "center" }}>
-                <CircularProgress color="inherit" />
-              </Box>
-            )}
-            {/* {console.log(messages)} */}
-            {messages &&
-              messages.map((msg) => (
-                <Box
-                  key={msg._id}
-                  sx={{
-                    borderRadius: "5px",
-                    maxWidth: "40%",
-                    margin: "3px",
-                    padding: "3px",
-                    backgroundColor: isSender(msg.user) ? "#85C1E9" : "#77ff73",
-                    marginLeft: isSender(msg.user) ? "1%" : "70%",
-                  }}
-                >
-                  <Typography>{msg.user}</Typography>
-                  <Typography
-                    dangerouslySetInnerHTML={{ __html: msg.content }}
+          {user ? (
+            <>
+              <ChatArea ref={myRef}>
+                {messages.length == 0 && (
+                  <Box sx={{ display: "flex", justifyContent: "center" }}>
+                    <CircularProgress color="inherit" />
+                  </Box>
+                )}
+                {/* {console.log(messages)} */}
+                {messages &&
+                  messages.map((msg) => (
+                    <Box
+                      key={msg._id}
+                      sx={{
+                        borderRadius: "5px",
+                        maxWidth: "40%",
+                        margin: "3px",
+                        padding: "3px",
+                        backgroundColor: isSender(msg.user)
+                          ? "#85C1E9"
+                          : "#77ff73",
+                        marginLeft: isSender(msg.user) ? "1%" : "70%",
+                      }}
+                    >
+                      <Typography>{msg.user}</Typography>
+                      <Typography
+                        dangerouslySetInnerHTML={{ __html: msg.content }}
+                      />
+                    </Box>
+                  ))}
+              </ChatArea>
+              {showPicker && (
+                <EmojiKeyBoard>
+                  <EmojiPicker
+                    onEmojiClick={onEmojiClick}
+                    emojiStyle="google"
+                    suggestedEmojisMode="recent"
+                    previewConfig={{ showPreview: false }}
+                    searchDisabled="true"
+                    height="45vh"
                   />
-                </Box>
-              ))}
-          </ChatArea>
-          {showPicker && (
-            <EmojiKeyBoard>
-              <EmojiPicker
-                onEmojiClick={onEmojiClick}
-                emojiStyle="google"
-                suggestedEmojisMode="recent"
-                previewConfig={{ showPreview: false }}
-                searchDisabled="true"
-                height="45vh"
-              />
-            </EmojiKeyBoard>
+                </EmojiKeyBoard>
+              )}
+              <ChatInputBox>
+                <ReactQuill
+                  theme="snow"
+                  value={value}
+                  onChange={setValue}
+                  modules={modules}
+                />
+
+                <SendBox>
+                  <Box>
+                    {/* here we are clicking image button on react-quill richtext and hide image buttton from react-quill */}
+
+                    <Tooltip title="Upload Document Maximum Size 70KB">
+                      <AddCircleOutlineIcon
+                        sx={{ marginRight: "5px", cursor: "pointer" }}
+                        onClick={() => {
+                          document.querySelector(".ql-image").click();
+                        }}
+                      />
+                    </Tooltip>
+
+                    <VerticalLine />
+                    <SentimentSatisfiedAltIcon
+                      sx={{ marginRight: "5px", cursor: "pointer" }}
+                      onClick={() => setShowPicker(!showPicker)}
+                    />
+                    <AlternateEmailIcon
+                      sx={{ marginRight: "5px", cursor: "pointer" }}
+                    />
+                  </Box>
+                  <SendButton sx={hoverEfffect} onClick={sendMessage}>
+                    <SendIcon sx={{ fontSize: "14px" }} />
+                  </SendButton>
+                </SendBox>
+              </ChatInputBox>
+            </>
+          ) : (
+            <>
+              <ChatArea ref={myRef}>
+                <Text>Please Join To Continue GroupChat</Text>
+              </ChatArea>
+            </>
           )}
-          <ChatInputBox>
-            <ReactQuill
-              theme="snow"
-              value={value}
-              onChange={setValue}
-              modules={modules}
-            />
-
-            <SendBox>
-              <Box>
-                {/* here we are clicking image button on react-quill richtext and hide image buttton from react-quill */}
-
-                <Tooltip title="Upload Document Maximum Size 70KB">
-                  <AddCircleOutlineIcon
-                    sx={{ marginRight: "5px", cursor: "pointer" }}
-                    onClick={() => {
-                      document.querySelector(".ql-image").click();
-                    }}
-                  />
-                </Tooltip>
-
-                <VerticalLine />
-                <SentimentSatisfiedAltIcon
-                  sx={{ marginRight: "5px", cursor: "pointer" }}
-                  onClick={() => setShowPicker(!showPicker)}
-                />
-                <AlternateEmailIcon
-                  sx={{ marginRight: "5px", cursor: "pointer" }}
-                />
-              </Box>
-              <SendButton sx={hoverEfffect} onClick={sendMessage}>
-                <SendIcon sx={{ fontSize: "14px" }} />
-              </SendButton>
-            </SendBox>
-          </ChatInputBox>
         </ChatBox>
       </Container>
     </>
