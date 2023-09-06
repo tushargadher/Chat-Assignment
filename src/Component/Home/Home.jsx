@@ -37,7 +37,7 @@ const Home = () => {
   const [value, setValue] = useState("");
   const [showPicker, setShowPicker] = useState(false);
   const [messages, setMessages] = useState([]);
-  const [user, setUser] = useState();
+  const [LoggedUser, setLoggedUser] = useState();
 
   // const [file, setFile] = useState();
   const myRef = useRef(null);
@@ -47,36 +47,56 @@ const Home = () => {
     if (!JSON.parse(localStorage.getItem("user"))) {
       const user = prompt("Enter Name To Join Chat");
       localStorage.setItem("user", JSON.stringify(user));
-      socket.emit("new-user-joined", user);
+      handleJoin(user);
     }
-    setUser(JSON.parse(localStorage.getItem("user")));
-
-    socket.on("user-joined", (user) => {
-      const synth = window.speechSynthesis;
-      const utterance = new SpeechSynthesisUtterance(`${user} Joind Chat`);
-      synth.speak(utterance);
-      toast.info(`${user} Joined Chat`);
-    });
-    // socket.on("receive", (obj) => {
-    //   let ChatArea = myRef.current;
-    //   ChatArea.appendChild(
-    //     <NewMessageBox sender={obj.name} message={obj.message} />
-    //   );
-    // });
+    setLoggedUser(JSON.parse(localStorage.getItem("user")));
     getAllMessage();
   }, []);
+
+
+
   useEffect(() => {
     getAllMessage();
     //scroll to new messsage
     myRef.current.scroll(0, myRef.current.scrollHeight);
   }, [messages]);
 
+  async function handleJoin(name) {
+    console.log(name);
+    // setLaoding(true);
+    try {
+      const config = {
+        header: {
+          "Content-Type": "application/json",
+        },
+      };
+      const { data } = await axios.post(
+        `${server}/api/user/join`,
+        { name },
+        config
+      );
+      if (data) {
+        localStorage.setItem("user", JSON.stringify(data));
+        setLoggedUser(JSON.parse(localStorage.getItem("user")));
+        socket.emit("new-user-joined", name);
+        socket.on("user-joined", (user) => {
+          const synth = window.speechSynthesis;
+          const utterance = new SpeechSynthesisUtterance(`${user} Joind Chat`);
+          synth.speak(utterance);
+          toast.info(`${user} Joined Chat`);
+        });
+      }
+    } catch (error) {
+      toast.error(error.response.data);
+    }
+  }
   const onEmojiClick = (emojiData) => {
     setValue(value + emojiData.emoji);
     setShowPicker(false);
   };
 
   const sendMessage = async () => {
+    const { name, _id } = LoggedUser;
     try {
       // const user = JSON.parse(localStorage.getItem("user"));
       const config = {
@@ -87,7 +107,7 @@ const Home = () => {
       console.log(`sending message ${value}`);
       const res = await axios.post(
         `${server}/api/message/send`,
-        { user, value },
+        { _id, name, value },
         config
       );
       socket.emit("send", value);
@@ -98,7 +118,6 @@ const Home = () => {
       }
     } catch (error) {
       toast.error(error.response.data);
-      // console.log(error);
     }
     setValue("");
   };
@@ -113,44 +132,20 @@ const Home = () => {
     }
   };
 
-  // const handleJoin = async (name) => {
-  //   console.log(name);
-  //   // setLaoding(true);
-  //   try {
-  //     const config = {
-  //       header: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     };
-  //     const { data } = await axios.post(
-  //       `${server}/api/user/join`,
-  //       { name },
-  //       config
-  //     );
-  //     if (data) {
-  //       localStorage.setItem("user", JSON.stringify(data));
-  //     }
-  //   } catch (error) {
-  //     toast.error(error.response.data);
-  //   }
-  // };
-
-  // const selectFile = (e) => {
-  //   setFile(e.target.files[0]);
-  //   console.log(e.target.files[0]);
-  // };
+  
   return (
     <>
       <ToastContainer />
       <Container>
         <JoinBox>
-          <Text>React Chat App</Text>
+          <Text>GroupChat</Text>
           <ExitBtn variant="contained" onClick={handleExit}>
-            {user ? "Leave" : "Join"}
+            {LoggedUser ? "Leave" : "Join"}
+            {console.log(LoggedUser)}
           </ExitBtn>
         </JoinBox>
         <ChatBox>
-          {user ? (
+          {LoggedUser ? (
             <>
               <ChatArea ref={myRef}>
                 {messages.length == 0 && (
@@ -161,23 +156,32 @@ const Home = () => {
                 {/* {console.log(messages)} */}
                 {messages &&
                   messages.map((msg) => (
-                    <Box
-                      key={msg._id}
-                      sx={{
-                        borderRadius: "5px",
-                        maxWidth: "40%",
-                        margin: "3px",
-                        padding: "3px",
-                        backgroundColor: isSender(msg.user)
-                          ? "#85C1E9"
-                          : "#77ff73",
-                        marginLeft: isSender(msg.user) ? "1%" : "70%",
-                      }}
-                    >
-                      <Typography>{msg.user}</Typography>
+                    <Box>
                       <Typography
-                        dangerouslySetInnerHTML={{ __html: msg.content }}
-                      />
+                        sx={{
+                          marginLeft: isSender(msg.senderId) ? "92%" : "1%",
+                        }}
+                      >
+                        {msg.senderName}
+                      </Typography>
+                      <Box
+                        key={msg._id}
+                        sx={{
+                          display: "inline-block",
+                          borderRadius: "5px",
+                          maxWidth: "40%",
+                          margin: "3px",
+                          padding: "5px",
+                          backgroundColor: isSender(msg.senderId)
+                            ? "#77ff73"
+                            : "#85C1E9",
+                          float: isSender(msg.senderId) ? "right" : "",
+                        }}
+                      >
+                        <Typography
+                          dangerouslySetInnerHTML={{ __html: msg.content }}
+                        />
+                      </Box>
                     </Box>
                   ))}
               </ChatArea>

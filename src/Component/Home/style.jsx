@@ -23,21 +23,23 @@ export const ChatBox = styled(Box)(({ theme }) => ({
   boxSizing: "border-box",
   padding: "8px",
   [theme.breakpoints.down("md")]: {
-    width: "90%",
+    width: "100%",
   },
 }));
 export const ChatArea = styled(Box)(({ theme }) => ({
-  height: "66%",
+  height: "80%",
   width: "100%",
-  border: "1px solid black",
+  border: "1px solid #D7DBDD",
+  backgroundColor: "#F2F3F4",
+  borderRadius: "5px",
   margin: "5px auto",
   overflow: "scroll",
   overflowX: "hidden",
 }));
 export const ChatInputBox = styled(Box)(({ theme }) => ({
-  height: "31%",
+  height: "20%",
   width: "100%",
-  border: "1px solid black",
+  backgroundColor: "#F2F3F4",
   borderRadius: "8px",
   margin: "5px auto",
   display: "flex",
@@ -95,7 +97,7 @@ export const JoinBox = styled(Box)(({ theme }) => ({
   padding: "5px 10px",
   marginBottom: "5px",
   [theme.breakpoints.down("md")]: {
-    width: "90%",
+    width: "100%",
   },
 }));
 export const ExitBtn = styled(Button)(({ theme }) => ({

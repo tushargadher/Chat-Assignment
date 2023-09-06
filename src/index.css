@@ -7,6 +7,7 @@
 }
 .MuiTypography-root p {
   display: inline-block;
+  font-size: 1rem;
 }
 .MuiTypography-root p img {
   height: 100px;
@@ -22,7 +23,9 @@
   justify-content: center;
   align-items: center;
 }
-
+::-webkit-scrollbar {
+  display: none;
+}
 .MessageBox {
   border-radius: 5px;
   background-color: #77ff73;
@@ -32,4 +35,9 @@
 }
 .ql-editor p img {
   height: 40px;
+}
+@media only screen and (max-width: 600px) {
+  .MuiTypography-root p {
+    font-size: 0.8rem;
+  }
 }

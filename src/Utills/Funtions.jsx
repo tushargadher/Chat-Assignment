@@ -24,9 +24,9 @@ export const MessageReceive = (name, msg) => {
   return div;
 };
 
-export const isSender = (user) => {
+export const isSender = (senderId) => {
   const loggedUser = JSON.parse(localStorage.getItem("user"));
-  
-  // if both are same the it return 0
-  return loggedUser.localeCompare(user);
+
+  //if the both id is same means sender is loggeduser and if both is different then it means it is receiver
+  return loggedUser._id == senderId;
 };
