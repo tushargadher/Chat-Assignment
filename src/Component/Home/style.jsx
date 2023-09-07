@@ -27,7 +27,7 @@ export const ChatBox = styled(Box)(({ theme }) => ({
   },
 }));
 export const ChatArea = styled(Box)(({ theme }) => ({
-  height: "80%",
+  height: "75%",
   width: "100%",
   border: "1px solid #D7DBDD",
   backgroundColor: "#F2F3F4",
@@ -37,9 +37,10 @@ export const ChatArea = styled(Box)(({ theme }) => ({
   overflowX: "hidden",
 }));
 export const ChatInputBox = styled(Box)(({ theme }) => ({
-  height: "20%",
+  height: "25%",
   width: "100%",
   backgroundColor: "#F2F3F4",
+  border: "1px solid #D7DBDD",
   borderRadius: "8px",
   margin: "5px auto",
   display: "flex",

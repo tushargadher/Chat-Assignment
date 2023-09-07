@@ -36,8 +36,17 @@
 .ql-editor p img {
   height: 40px;
 }
+.ql-container {
+  /* background-color: red; */
+  height: 12vh;
+  overflow: scroll;
+}
+.ql-toolbar.ql-snow {
+  border: none;
+}
 @media only screen and (max-width: 600px) {
   .MuiTypography-root p {
     font-size: 0.8rem;
   }
+  
 }

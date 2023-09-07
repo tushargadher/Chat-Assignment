@@ -53,8 +53,6 @@ const Home = () => {
     getAllMessage();
   }, []);
 
-
-
   useEffect(() => {
     getAllMessage();
     //scroll to new messsage
@@ -132,7 +130,6 @@ const Home = () => {
     }
   };
 
-  
   return (
     <>
       <ToastContainer />
@@ -164,13 +161,28 @@ const Home = () => {
                       >
                         {msg.senderName}
                       </Typography>
+                      {/* <Box
+                        sx={{
+                          position: "absolute",
+                          display: "inline-block",
+                          border: "1px solid black",
+                          height: "2px",
+                          width: "5px",
+                          top: "42%",
+                          backgroundColor: isSender(msg.senderId)
+                            ? "#77ff73"
+                            : "#85C1E9",
+                        }}
+                      >
+                        .
+                      </Box> */}
                       <Box
                         key={msg._id}
                         sx={{
                           display: "inline-block",
                           borderRadius: "5px",
                           maxWidth: "40%",
-                          margin: "3px",
+                          margin: "3px 3px 3px 10px",
                           padding: "5px",
                           backgroundColor: isSender(msg.senderId)
                             ? "#77ff73"
